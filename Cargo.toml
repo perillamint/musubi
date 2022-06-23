@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2022 perillamint
+#
+# SPDX-License-Identifier: CC0-1.0
+
+[package]
+name = "musubi"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+diesel = { version = "2.0.0-rc.0", features = ["postgres"] }
+tokio = "1.19.0"
+actix-web = "4.0.1"
+lazy_static = "1.4.0"
+clap = { version = "3.1.18", features = ["derive"] }
+toml = "0.5.9"
+serde = { version = "1.0.137", features = ["derive"] }
+log = "0.4.17"
+regex = "1.5.6"
+prometheus = { version = "0.13.1", features = ["process"] }
+custom_error = "1.9.2"
