@@ -16,21 +16,3 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
-
-mod api;
-mod auth;
-
-#[get("/")]
-async fn index() -> impl Responder {
-    HttpResponse::Ok().body("TODO: Serve the file")
-}
-
-#[actix_web::main]
-async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(index).service(api::get_service()))
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
-}
