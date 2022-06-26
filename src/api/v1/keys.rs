@@ -17,11 +17,33 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use actix_web::{get, web, HttpResponse, Responder, Scope};
+use actix_web::{delete, get, post, web, HttpRequest, HttpResponse, Responder, Result, Scope};
+use serde::Serialize;
+use super::types::{Peer};
 
-mod v1;
+#[derive(Serialize)]
+struct APIHello {
+    msg: String
+}
+
+#[get("/")]
+async fn get_keys() -> Result<impl Responder> {
+    let hello = APIHello {
+        msg: String::from("Hello, world!"),
+    };
+    Ok(web::Json(hello))
+}
+
+#[post("/")]
+async fn add_key(req: HttpRequest, key: web::Json<Peer>) -> impl Responder {
+    HttpResponse::Ok().body("TODO: Implement me")
+}
+
+#[delete("/{key_id}")]
+async fn delete_key(req: HttpRequest) -> impl Responder {
+    HttpResponse::Ok().body("TODO: Implement me")
+}
 
 pub fn get_service() -> Scope {
-    web::scope("/api")
-        .service(v1::get_service())
+    web::scope("/keys").service(get_keys).service(add_key)
 }

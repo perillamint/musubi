@@ -19,9 +19,14 @@
 
 use actix_web::{get, web, HttpResponse, Responder, Scope};
 
-mod v1;
+pub mod types;
+mod keys;
+
+#[get("/")]
+async fn index() -> impl Responder {
+    HttpResponse::Ok().body("Hello, musubi!")
+}
 
 pub fn get_service() -> Scope {
-    web::scope("/api")
-        .service(v1::get_service())
+    web::scope("/v1")
 }

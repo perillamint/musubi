@@ -17,11 +17,16 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use actix_web::{get, web, HttpResponse, Responder, Scope};
+use serde::{Serialize, Deserialize};
 
-mod v1;
-
-pub fn get_service() -> Scope {
-    web::scope("/api")
-        .service(v1::get_service())
+#[derive(Serialize, Deserialize)]
+pub struct Peer {
+    pubkey: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) psk: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) endpoint: Option<String>,
+    pub(crate) allowed_ips: Vec<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) keepalive: Option<u16>,
 }
