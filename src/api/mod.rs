@@ -22,6 +22,5 @@ use actix_web::{get, web, HttpResponse, Responder, Scope};
 mod v1;
 
 pub fn get_service() -> Scope {
-    web::scope("/api")
-        .service(v1::get_service())
+    web::scope("/api").service(v1::get_service())
 }

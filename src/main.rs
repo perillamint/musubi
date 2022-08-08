@@ -21,6 +21,7 @@ use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 
 mod api;
 mod auth;
+mod error;
 
 #[get("/")]
 async fn index() -> impl Responder {

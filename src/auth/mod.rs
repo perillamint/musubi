@@ -17,4 +17,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+use crate::error::AuthError;
+use async_trait::async_trait;
+
 pub mod oidc;
+
+pub struct AuthResponse {
+    id: String,
+    provider: String,
+    email: Option<String>,
+}
+
+#[async_trait]
+pub trait AuthProvider {
+    async fn get_challenge(&self) -> Result<String, AuthError>;
+    async fn verify(&self, response: &str) -> Result<AuthResponse, AuthError>;
+}

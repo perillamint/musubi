@@ -17,25 +17,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use actix_web::{get, web, HttpResponse, Responder, Result, Scope};
-
-mod interface;
-mod keys;
-pub mod types;
-
-use types::{APIResponse, JsonAPIResponse};
-
-#[get("/")]
-async fn index() -> Result<JsonAPIResponse<String>> {
-    Ok(web::Json(APIResponse {
-        code: 0,
-        error: None,
-        message: Some("Hello, musubi!".to_string()),
-    }))
-}
+use actix_web::{get, web, HttpResponse, Responder, Scope};
 
 pub fn get_service() -> Scope {
-    web::scope("/v1")
-        .service(keys::get_service())
-        .service(interface::get_service())
+    web::scope("/interface")
 }

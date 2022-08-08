@@ -17,31 +17,40 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+use super::types::{APIResponse, JsonAPIResponse, Key, Peer};
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse, Responder, Result, Scope};
-use serde::Serialize;
-use super::types::{Peer};
-
-#[derive(Serialize)]
-struct APIHello {
-    msg: String
-}
 
 #[get("/")]
-async fn get_keys() -> Result<impl Responder> {
-    let hello = APIHello {
-        msg: String::from("Hello, world!"),
-    };
-    Ok(web::Json(hello))
+async fn get_keys() -> Result<JsonAPIResponse<String>> {
+    Ok(web::Json(APIResponse {
+        code: 0,
+        error: None,
+        message: Some("Hello World".to_string()),
+    }))
 }
 
 #[post("/")]
-async fn add_key(req: HttpRequest, key: web::Json<Peer>) -> impl Responder {
-    HttpResponse::Ok().body("TODO: Implement me")
+async fn add_key(req: HttpRequest, key: web::Json<Peer>) -> Result<JsonAPIResponse<String>> {
+    Ok(web::Json(APIResponse {
+        code: 0,
+        error: None,
+        message: Some(String::from("OK")),
+    }))
 }
 
 #[delete("/{key_id}")]
-async fn delete_key(req: HttpRequest) -> impl Responder {
-    HttpResponse::Ok().body("TODO: Implement me")
+async fn delete_key(req: HttpRequest) -> Result<JsonAPIResponse<Key>> {
+    let key = Key {
+        pubkey: "".to_string(),
+        privkey: None,
+        psk: None,
+    };
+
+    Ok(web::Json(APIResponse {
+        code: 0,
+        error: None,
+        message: Some(key),
+    }))
 }
 
 pub fn get_service() -> Scope {

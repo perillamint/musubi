@@ -16,3 +16,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
+
+use super::AuthResponse;
+use crate::error::AuthError;
+use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct OIDCAuthContext {
+    //
+}
+
+pub struct OIDCAuthProvider {}
+
+impl OIDCAuthProvider {
+    pub fn new(client_id: &str, client_secret: &str, redirect: &str, issuer: &str) -> Self {
+        OIDCAuthProvider {}
+    }
+}
+
+#[async_trait]
+impl super::AuthProvider for OIDCAuthProvider {
+    async fn get_challenge(&self) -> Result<String, AuthError> {
+        todo!("implement me.")
+    }
+
+    async fn verify(&self, response: &str) -> Result<AuthResponse, AuthError> {
+        todo!("implement me!");
+    }
+}

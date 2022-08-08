@@ -17,25 +17,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use actix_web::{get, web, HttpResponse, Responder, Result, Scope};
+use thiserror::Error;
 
-mod interface;
-mod keys;
-pub mod types;
-
-use types::{APIResponse, JsonAPIResponse};
-
-#[get("/")]
-async fn index() -> Result<JsonAPIResponse<String>> {
-    Ok(web::Json(APIResponse {
-        code: 0,
-        error: None,
-        message: Some("Hello, musubi!".to_string()),
-    }))
-}
-
-pub fn get_service() -> Scope {
-    web::scope("/v1")
-        .service(keys::get_service())
-        .service(interface::get_service())
+#[derive(Error, Debug)]
+pub enum AuthError {
+    #[error("Invalid credential: {0}")]
+    InvalidCredential(String),
+    #[error("Failed to get response from remote authentication server.")]
+    RemoteConnectionFailure(#[from] reqwest::Error),
+    #[error("Unknown internal error. BAD!")]
+    UnknownError,
 }

@@ -17,7 +17,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use serde::{Serialize, Deserialize};
+use actix_web::web::Json;
+use serde::{Deserialize, Serialize};
+
+#[derive(Serialize, Deserialize)]
+pub struct Interface {
+    name: String,
+    listen_port: i32,
+    key: Key,
+}
 
 #[derive(Serialize, Deserialize)]
 pub struct Peer {
@@ -30,3 +38,23 @@ pub struct Peer {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub(crate) keepalive: Option<u16>,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct Key {
+    pub pubkey: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub privkey: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub psk: Option<String>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct APIResponse<T> {
+    pub code: i32,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub error: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub message: Option<T>,
+}
+
+pub type JsonAPIResponse<T> = Json<APIResponse<T>>;
