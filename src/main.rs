@@ -18,10 +18,28 @@
  */
 
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use clap::Parser;
 
 mod api;
 mod auth;
+mod config;
 mod error;
+
+use config::read_config;
+
+#[macro_use]
+extern crate lazy_static;
+
+#[derive(clap::Parser)]
+#[clap(about, version, author)]
+struct Args {
+    #[clap(long, short = 'c', value_name = "CONFIG")]
+    config: String,
+}
+
+lazy_static! {
+    static ref ARGS: Args = Args::parse();
+}
 
 #[get("/")]
 async fn index() -> impl Responder {
@@ -30,8 +48,9 @@ async fn index() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let cfg = read_config(&ARGS.config);
     HttpServer::new(|| App::new().service(index).service(api::get_service()))
-        .bind(("127.0.0.1", 8080))?
+        .bind((cfg.http.bind, cfg.http.port))?
         .run()
         .await
 }
