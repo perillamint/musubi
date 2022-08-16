@@ -17,25 +17,27 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use crate::api::types::{APIResponse, JsonAPIResponse, Key, Peer};
-use actix_web::{delete, get, post, web, HttpRequest, HttpResponse, Responder, Result, Scope};
+use crate::api::types::{APIResponse, IntoResult, JsonAPIResponse, Key, Peer};
+use actix_web::{delete, get, post, web, HttpRequest, Result, Scope};
 
 #[get("/")]
 async fn get_keys() -> Result<JsonAPIResponse<String>> {
-    Ok(web::Json(APIResponse {
+    APIResponse {
         code: 0,
         error: None,
         message: Some("Hello World".to_string()),
-    }))
+    }
+    .into_result()
 }
 
 #[post("/")]
 async fn add_key(req: HttpRequest, key: web::Json<Peer>) -> Result<JsonAPIResponse<String>> {
-    Ok(web::Json(APIResponse {
+    APIResponse {
         code: 0,
         error: None,
         message: Some(String::from("OK")),
-    }))
+    }
+    .into_result()
 }
 
 #[delete("/{key_id}")]
@@ -46,11 +48,12 @@ async fn delete_key(req: HttpRequest) -> Result<JsonAPIResponse<Key>> {
         psk: None,
     };
 
-    Ok(web::Json(APIResponse {
+    APIResponse {
         code: 0,
         error: None,
         message: Some(key),
-    }))
+    }
+    .into_result()
 }
 
 pub fn get_service() -> Scope {

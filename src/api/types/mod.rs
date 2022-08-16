@@ -17,7 +17,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+use actix_web::http::StatusCode;
 use actix_web::web::Json;
+use actix_web::HttpResponse;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
@@ -55,6 +57,26 @@ pub struct APIResponse<T> {
     pub error: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<T>,
+}
+
+pub trait IntoResult<T> {
+    /// Convert APIResponse<T> to actix_web Result<JsonAPIResponse<T>>
+    fn into_result(self) -> Result<JsonAPIResponse<T>, actix_web::Error>;
+}
+
+impl<T: for<'a> Deserialize<'a> + Serialize> IntoResult<T> for APIResponse<T> {
+    fn into_result(self) -> Result<Json<Self>, actix_web::Error> {
+        match self.error {
+            None => Ok(Json(self)),
+            Some(_) => Err(actix_web::error::InternalError::from_response(
+                "",
+                HttpResponse::Ok()
+                    .status(StatusCode::INTERNAL_SERVER_ERROR)
+                    .json(self),
+            )
+            .into()),
+        }
+    }
 }
 
 pub type JsonAPIResponse<T> = Json<APIResponse<T>>;
