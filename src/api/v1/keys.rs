@@ -17,7 +17,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use super::types::{APIResponse, JsonAPIResponse, Key, Peer};
+use crate::api::types::{APIResponse, JsonAPIResponse, Key, Peer};
 use actix_web::{delete, get, post, web, HttpRequest, HttpResponse, Responder, Result, Scope};
 
 #[get("/")]

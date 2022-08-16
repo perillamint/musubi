@@ -21,9 +21,8 @@ use actix_web::{get, web, HttpResponse, Responder, Result, Scope};
 
 mod interface;
 mod keys;
-pub mod types;
 
-use types::{APIResponse, JsonAPIResponse};
+use super::types::{APIResponse, JsonAPIResponse};
 
 #[get("/")]
 async fn index() -> Result<JsonAPIResponse<String>> {
