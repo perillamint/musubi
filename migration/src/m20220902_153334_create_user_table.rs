@@ -24,6 +24,9 @@ pub struct Migration;
 
 const IDX_USER_TABLE_EXTERNAL_ID: &str = "idx_user_table_external_id";
 const IDX_USER_TABLE_EMAIL: &str = "idx_user_table_email";
+const IDX_USER_TABLE_STATUS: &str = "idx_user_table_status";
+const IDX_USER_TABLE_CREATED_AT: &str = "idx_user_table_created_at";
+const IDX_USER_TABLE_UPDATED_AT: &str = "idx_user_table_updated_at";
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -41,6 +44,17 @@ impl MigrationTrait for Migration {
                             .not_null(),
                     )
                     .col(ColumnDef::new(User::Email).string().not_null())
+                    .col(ColumnDef::new(User::Status).string().not_null())
+                    .col(
+                        ColumnDef::new(User::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(User::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -66,6 +80,39 @@ impl MigrationTrait for Migration {
                     .index_type(IndexType::Hash)
                     .to_owned(),
             )
+            .await?;
+
+        manager
+            .create_index(
+                Index::create()
+                    .name(IDX_USER_TABLE_STATUS)
+                    .table(User::Table)
+                    .col(User::Status)
+                    .index_type(IndexType::Hash)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_index(
+                Index::create()
+                    .name(IDX_USER_TABLE_CREATED_AT)
+                    .table(User::Table)
+                    .col(User::CreatedAt)
+                    .index_type(IndexType::BTree)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_index(
+                Index::create()
+                    .name(IDX_USER_TABLE_UPDATED_AT)
+                    .table(User::Table)
+                    .col(User::UpdatedAt)
+                    .index_type(IndexType::BTree)
+                    .to_owned(),
+            )
             .await
     }
 
@@ -89,6 +136,33 @@ impl MigrationTrait for Migration {
             .await?;
 
         manager
+            .drop_index(
+                Index::drop()
+                    .table(User::Table)
+                    .name(IDX_USER_TABLE_STATUS)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .drop_index(
+                Index::drop()
+                    .table(User::Table)
+                    .name(IDX_USER_TABLE_CREATED_AT)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .drop_index(
+                Index::drop()
+                    .table(User::Table)
+                    .name(IDX_USER_TABLE_UPDATED_AT)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
             .drop_table(Table::drop().table(User::Table).to_owned())
             .await
     }
@@ -101,4 +175,7 @@ pub(crate) enum User {
     Id,
     ExternalId,
     Email,
+    Status,
+    CreatedAt,
+    UpdatedAt,
 }

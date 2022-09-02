@@ -27,6 +27,9 @@ pub struct Migration;
 const FKEY_PEER_TABLE_OWNER_ID: &str = "fkey_peer_table_owner_id";
 const IDX_PEER_TABLE_OWNER_ID: &str = "idx_peer_table_owner_id";
 const IDX_PEER_TABLE_PUBKEY: &str = "idx_peer_table_pubkey";
+const IDX_PEER_TABLE_STATUS: &str = "idx_peer_table_status";
+const IDX_PEER_TABLE_CREATED_AT: &str = "idx_peer_table_created_at";
+const IDX_PEER_TABLE_UPDATED_AT: &str = "idx_peer_table_updated_at";
 
 #[async_trait::async_trait]
 impl MigrationTrait for Migration {
@@ -40,6 +43,17 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Peer::OwnerId).uuid().not_null())
                     .col(ColumnDef::new(Peer::Pubkey).string().not_null())
                     .col(ColumnDef::new(Peer::Psk).string().not_null())
+                    .col(ColumnDef::new(Peer::Status).string().not_null())
+                    .col(
+                        ColumnDef::new(Peer::CreatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Peer::UpdatedAt)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -77,6 +91,39 @@ impl MigrationTrait for Migration {
                     .index_type(IndexType::Hash)
                     .to_owned(),
             )
+            .await?;
+
+        manager
+            .create_index(
+                Index::create()
+                    .name(IDX_PEER_TABLE_STATUS)
+                    .table(Peer::Table)
+                    .col(Peer::Status)
+                    .index_type(IndexType::Hash)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_index(
+                Index::create()
+                    .name(IDX_PEER_TABLE_CREATED_AT)
+                    .table(Peer::Table)
+                    .col(Peer::CreatedAt)
+                    .index_type(IndexType::BTree)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .create_index(
+                Index::create()
+                    .name(IDX_PEER_TABLE_UPDATED_AT)
+                    .table(Peer::Table)
+                    .col(Peer::UpdatedAt)
+                    .index_type(IndexType::BTree)
+                    .to_owned(),
+            )
             .await
     }
 
@@ -104,6 +151,33 @@ impl MigrationTrait for Migration {
             .await?;
 
         manager
+            .drop_index(
+                Index::drop()
+                    .table(User::Table)
+                    .name(IDX_PEER_TABLE_STATUS)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .drop_index(
+                Index::drop()
+                    .table(User::Table)
+                    .name(IDX_PEER_TABLE_CREATED_AT)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
+            .drop_index(
+                Index::drop()
+                    .table(User::Table)
+                    .name(IDX_PEER_TABLE_UPDATED_AT)
+                    .to_owned(),
+            )
+            .await?;
+
+        manager
             .drop_table(Table::drop().table(Peer::Table).to_owned())
             .await
     }
@@ -117,4 +191,7 @@ pub(crate) enum Peer {
     OwnerId,
     Pubkey,
     Psk,
+    Status,
+    CreatedAt,
+    UpdatedAt,
 }
