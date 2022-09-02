@@ -62,7 +62,7 @@ impl MigrationTrait for Migration {
         manager
             .create_foreign_key(
                 ForeignKey::create()
-                    .name("fkey_peer_owner")
+                    .name(FKEY_PEER_TABLE_OWNER_ID)
                     .from(Peer::Table, Peer::OwnerId)
                     .to(User::Table, User::Id)
                     .on_delete(ForeignKeyAction::Cascade)
@@ -129,7 +129,12 @@ impl MigrationTrait for Migration {
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_foreign_key(ForeignKey::drop().name(FKEY_PEER_TABLE_OWNER_ID).to_owned())
+            .drop_foreign_key(
+                ForeignKey::drop()
+                    .table(Peer::Table)
+                    .name(FKEY_PEER_TABLE_OWNER_ID)
+                    .to_owned(),
+            )
             .await?;
 
         manager

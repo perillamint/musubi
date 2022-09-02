@@ -66,7 +66,6 @@ impl MigrationTrait for Migration {
                     .table(User::Table)
                     .col(User::ExternalId)
                     .index_type(IndexType::Hash)
-                    .unique()
                     .to_owned(),
             )
             .await?;
