@@ -60,8 +60,9 @@ async fn main() -> std::io::Result<()> {
         .max_connections(cfg.database.max_connections)
         .min_connections(cfg.database.min_connections);
 
-    // Migrate the database
     let conn = Database::connect(connopt).await.unwrap();
+
+    // Migrate the database
     Migrator::up(&conn, None).await.unwrap();
 
     HttpServer::new(|| App::new().service(index).service(api::get_service()))
