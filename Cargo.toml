@@ -24,3 +24,6 @@ log = "0.4.17"
 regex = "1.5"
 thiserror = "1.0"
 async-trait = "0.1"
+
+# Migrator
+migration = { path = "./migration" }
