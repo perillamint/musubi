@@ -19,6 +19,7 @@
 
 use actix_web::{get, App, HttpResponse, HttpServer, Responder};
 use clap::Parser;
+use sea_orm::{ConnectOptions, Database};
 
 mod api;
 mod auth;
@@ -26,6 +27,8 @@ mod config;
 mod error;
 
 use config::read_config;
+
+use migration::{Migrator, MigratorTrait};
 
 #[macro_use]
 extern crate lazy_static;
@@ -49,6 +52,18 @@ async fn index() -> impl Responder {
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let cfg = read_config(&ARGS.config);
+
+    // Connect to the database
+    let mut connopt = ConnectOptions::new(cfg.database.url);
+
+    connopt
+        .max_connections(cfg.database.max_connections)
+        .min_connections(cfg.database.min_connections);
+
+    // Migrate the database
+    let conn = Database::connect(connopt).await.unwrap();
+    Migrator::up(&conn, None).await.unwrap();
+
     HttpServer::new(|| App::new().service(index).service(api::get_service()))
         .bind((cfg.http.bind, cfg.http.port))?
         .run()

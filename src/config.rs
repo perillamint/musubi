@@ -37,21 +37,17 @@ impl Default for HTTPConfig {
 
 #[derive(Deserialize)]
 pub(crate) struct Database {
-    pub host: String,
-    pub port: u16,
-    pub user: String,
-    pub password: String,
-    pub database: String,
+    pub url: String,
+    pub max_connections: u32,
+    pub min_connections: u32,
 }
 
 impl Default for Database {
     fn default() -> Self {
         Self {
-            host: "127.0.0.1".to_string(),
-            port: 5432,
-            user: "postgres".to_string(),
-            password: "postgres".to_string(),
-            database: "musubi".to_string(),
+            url: "postgres://postgres:postgres@localhost:5432/musubi".to_string(),
+            max_connections: 100,
+            min_connections: 5,
         }
     }
 }
