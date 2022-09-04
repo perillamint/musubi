@@ -21,6 +21,7 @@ pub use sea_orm_migration::prelude::*;
 
 mod m20220902_153334_create_user_table;
 mod m20220902_154034_create_peer_table;
+mod m20220904_160307_create_ip_table;
 
 pub struct Migrator;
 
@@ -30,6 +31,7 @@ impl MigratorTrait for Migrator {
         vec![
             Box::new(m20220902_153334_create_user_table::Migration),
             Box::new(m20220902_154034_create_peer_table::Migration),
+            Box::new(m20220904_160307_create_ip_table::Migration),
         ]
     }
 }

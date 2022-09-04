@@ -21,5 +21,6 @@
 
 pub mod prelude;
 
+pub mod ip;
 pub mod peer;
 pub mod user;

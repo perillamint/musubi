@@ -23,14 +23,12 @@ use sea_orm::entity::prelude::*;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Serialize, Deserialize)]
-#[sea_orm(table_name = "peer")]
+#[sea_orm(table_name = "ip")]
 pub struct Model {
     #[sea_orm(primary_key, auto_increment = false)]
     pub id: Uuid,
-    pub owner_id: Uuid,
-    pub pubkey: String,
-    pub psk: String,
-    pub status: String,
+    pub peer_id: Uuid,
+    pub address: String,
     pub created_at: DateTimeWithTimeZone,
     pub updated_at: DateTimeWithTimeZone,
 }
@@ -38,26 +36,18 @@ pub struct Model {
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::OwnerId",
-        to = "super::user::Column::Id",
+        belongs_to = "super::peer::Entity",
+        from = "Column::PeerId",
+        to = "super::peer::Column::Id",
         on_update = "Cascade",
         on_delete = "Cascade"
     )]
-    User,
-    #[sea_orm(has_many = "super::ip::Entity")]
-    Ip,
+    Peer,
 }
 
-impl Related<super::user::Entity> for Entity {
+impl Related<super::peer::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::User.def()
-    }
-}
-
-impl Related<super::ip::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::Ip.def()
+        Relation::Peer.def()
     }
 }
 
