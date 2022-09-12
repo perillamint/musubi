@@ -54,19 +54,14 @@ impl MigrationTrait for Migration {
                             .timestamp_with_time_zone()
                             .not_null(),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        // Create FKEY for the Owner
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name(FKEY_PEER_TABLE_OWNER_ID)
-                    .from(Peer::Table, Peer::OwnerId)
-                    .to(User::Table, User::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .on_update(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKeyCreateStatement::new()
+                            .name(FKEY_PEER_TABLE_OWNER_ID)
+                            .from(Peer::Table, Peer::OwnerId)
+                            .to(User::Table, User::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -77,7 +72,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_PEER_TABLE_OWNER_ID)
                     .table(Peer::Table)
                     .col(Peer::OwnerId)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -88,7 +82,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_PEER_TABLE_PUBKEY)
                     .table(Peer::Table)
                     .col(Peer::Pubkey)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -99,7 +92,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_PEER_TABLE_STATUS)
                     .table(Peer::Table)
                     .col(Peer::Status)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -110,7 +102,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_PEER_TABLE_CREATED_AT)
                     .table(Peer::Table)
                     .col(Peer::CreatedAt)
-                    .index_type(IndexType::BTree)
                     .to_owned(),
             )
             .await?;
@@ -121,67 +112,12 @@ impl MigrationTrait for Migration {
                     .name(IDX_PEER_TABLE_UPDATED_AT)
                     .table(Peer::Table)
                     .col(Peer::UpdatedAt)
-                    .index_type(IndexType::BTree)
                     .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        manager
-            .drop_foreign_key(
-                ForeignKey::drop()
-                    .table(Peer::Table)
-                    .name(FKEY_PEER_TABLE_OWNER_ID)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(Peer::Table)
-                    .name(IDX_PEER_TABLE_OWNER_ID)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(Peer::Table)
-                    .name(IDX_PEER_TABLE_PUBKEY)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_PEER_TABLE_STATUS)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_PEER_TABLE_CREATED_AT)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_PEER_TABLE_UPDATED_AT)
-                    .to_owned(),
-            )
-            .await?;
-
         manager
             .drop_table(Table::drop().table(Peer::Table).to_owned())
             .await

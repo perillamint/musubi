@@ -51,19 +51,14 @@ impl MigrationTrait for Migration {
                             .timestamp_with_time_zone()
                             .not_null(),
                     )
-                    .to_owned(),
-            )
-            .await?;
-
-        // Create FKEY for the Peer
-        manager
-            .create_foreign_key(
-                ForeignKey::create()
-                    .name(FKEY_IP_TABLE_PEER_ID)
-                    .from(Ip::Table, Ip::PeerId)
-                    .to(Peer::Table, Peer::Id)
-                    .on_delete(ForeignKeyAction::Cascade)
-                    .on_update(ForeignKeyAction::Cascade)
+                    .foreign_key(
+                        ForeignKeyCreateStatement::new()
+                            .name(FKEY_IP_TABLE_PEER_ID)
+                            .from(Ip::Table, Ip::PeerId)
+                            .to(Peer::Table, Peer::Id)
+                            .on_delete(ForeignKeyAction::Cascade)
+                            .on_update(ForeignKeyAction::Cascade),
+                    )
                     .to_owned(),
             )
             .await?;
@@ -74,7 +69,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_IP_TABLE_PEER_ID)
                     .table(Ip::Table)
                     .col(Ip::PeerId)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -85,7 +79,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_IP_TABLE_ADDRESS)
                     .table(Ip::Table)
                     .col(Ip::Address)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -96,7 +89,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_IP_TABLE_CREATED_AT)
                     .table(Ip::Table)
                     .col(Ip::CreatedAt)
-                    .index_type(IndexType::BTree)
                     .to_owned(),
             )
             .await?;
@@ -107,7 +99,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_IP_TABLE_UPDATED_AT)
                     .table(Ip::Table)
                     .col(Ip::UpdatedAt)
-                    .index_type(IndexType::BTree)
                     .to_owned(),
             )
             .await?;
@@ -116,51 +107,6 @@ impl MigrationTrait for Migration {
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        manager
-            .drop_foreign_key(
-                ForeignKey::drop()
-                    .table(Ip::Table)
-                    .name(FKEY_IP_TABLE_PEER_ID)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(Peer::Table)
-                    .name(IDX_IP_TABLE_PEER_ID)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(Peer::Table)
-                    .name(IDX_IP_TABLE_ADDRESS)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(Peer::Table)
-                    .name(IDX_IP_TABLE_CREATED_AT)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(Peer::Table)
-                    .name(IDX_IP_TABLE_UPDATED_AT)
-                    .to_owned(),
-            )
-            .await?;
-
         manager
             .drop_table(Table::drop().table(Ip::Table).to_owned())
             .await

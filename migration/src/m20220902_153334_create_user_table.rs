@@ -65,7 +65,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_USER_TABLE_EXTERNAL_ID)
                     .table(User::Table)
                     .col(User::ExternalId)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -76,7 +75,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_USER_TABLE_EMAIL)
                     .table(User::Table)
                     .col(User::Email)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -87,7 +85,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_USER_TABLE_STATUS)
                     .table(User::Table)
                     .col(User::Status)
-                    .index_type(IndexType::Hash)
                     .to_owned(),
             )
             .await?;
@@ -98,7 +95,6 @@ impl MigrationTrait for Migration {
                     .name(IDX_USER_TABLE_CREATED_AT)
                     .table(User::Table)
                     .col(User::CreatedAt)
-                    .index_type(IndexType::BTree)
                     .to_owned(),
             )
             .await?;
@@ -109,58 +105,12 @@ impl MigrationTrait for Migration {
                     .name(IDX_USER_TABLE_UPDATED_AT)
                     .table(User::Table)
                     .col(User::UpdatedAt)
-                    .index_type(IndexType::BTree)
                     .to_owned(),
             )
             .await
     }
 
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_USER_TABLE_EMAIL)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_USER_TABLE_EXTERNAL_ID)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_USER_TABLE_STATUS)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_USER_TABLE_CREATED_AT)
-                    .to_owned(),
-            )
-            .await?;
-
-        manager
-            .drop_index(
-                Index::drop()
-                    .table(User::Table)
-                    .name(IDX_USER_TABLE_UPDATED_AT)
-                    .to_owned(),
-            )
-            .await?;
-
         manager
             .drop_table(Table::drop().table(User::Table).to_owned())
             .await
