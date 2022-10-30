@@ -22,14 +22,15 @@ use async_trait::async_trait;
 
 pub mod oidc;
 
-pub struct AuthResponse {
+pub struct AuthResponse<T> {
     id: String,
     provider: String,
     email: Option<String>,
+    permission: Option<T>,
 }
 
 #[async_trait]
-pub trait AuthProvider {
-    async fn get_challenge(&self) -> Result<String, AuthError>;
-    async fn verify(&self, response: &str) -> Result<AuthResponse, AuthError>;
+pub trait AuthProvider<C, R, T> {
+    async fn get_challenge(&self) -> Result<(String, C), AuthError>;
+    async fn verify(&self, context: C, response: R) -> Result<AuthResponse<T>, AuthError>;
 }

@@ -23,8 +23,14 @@ use thiserror::Error;
 pub enum AuthError {
     #[error("Invalid credential: {0}")]
     InvalidCredential(String),
+    #[error("Invalid configuration: {0}")]
+    InvalidConfiguration(String),
     #[error("Failed to get response from remote authentication server.")]
     RemoteConnectionFailure(#[from] reqwest::Error),
+    #[error("Failed to get proper response from remote authentication server: {0}")]
+    RemoteServiceError(String),
+    #[error("Failed to vaildate response from remote authentication server: {0}")]
+    InvalidResponse(String),
     #[error("Unknown internal error. BAD!")]
     UnknownError,
 }
