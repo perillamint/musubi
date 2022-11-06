@@ -17,11 +17,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder};
 use clap::Parser;
 use sea_orm::{ConnectOptions, Database};
 
 mod api;
+mod auth;
 mod config;
 mod error;
 mod idp;
@@ -65,8 +66,13 @@ async fn main() -> std::io::Result<()> {
     // Migrate the database
     Migrator::up(&conn, None).await.unwrap();
 
-    HttpServer::new(|| App::new().service(index).service(api::get_service()))
-        .bind((cfg.http.bind, cfg.http.port))?
-        .run()
-        .await
+    HttpServer::new(|| {
+        App::new()
+            .service(index)
+            .service(web::scope("/api").service(api::get_service()))
+            .service(web::scope("/auth").service(auth::get_service()))
+    })
+    .bind((cfg.http.bind, cfg.http.port))?
+    .run()
+    .await
 }

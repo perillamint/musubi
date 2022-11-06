@@ -17,11 +17,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+use crate::idp::oidc;
 use actix_web::{get, web, HttpResponse, Responder, Scope};
 
-mod types;
-mod v1;
+#[get("/auth")]
+pub async fn get_auth() -> impl Responder {
+    HttpResponse::Ok().body("Hello, world!")
+}
+
+#[get("/redirect")]
+pub async fn get_redirect() -> impl Responder {
+    HttpResponse::Ok().body("Hello, world!")
+}
 
 pub fn get_service() -> Scope {
-    web::scope("").service(v1::get_service())
+    web::scope("/oidc").service(get_auth).service(get_redirect)
 }

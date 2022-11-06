@@ -17,11 +17,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-use actix_web::{get, web, HttpResponse, Responder, Scope};
+use actix_web::{web, Scope};
 
-mod types;
-mod v1;
+mod oidc;
 
 pub fn get_service() -> Scope {
-    web::scope("").service(v1::get_service())
+    web::scope("").service(oidc::get_service())
 }
