@@ -19,7 +19,7 @@
 
 use std::marker::PhantomData;
 
-use super::AuthResponse;
+use super::{AuthProvider, AuthResponse};
 use crate::config::OIDCConfig;
 use crate::error::AuthError;
 use async_trait::async_trait;
@@ -80,7 +80,7 @@ impl<T: AdditionalClaims> OIDCAuthProvider<T> {
 }
 
 #[async_trait]
-impl<T: AdditionalClaims + Send + Sync + Clone> super::AuthProvider<OIDCAuthContext, String, T>
+impl<T: AdditionalClaims + Send + Sync + Clone> AuthProvider<OIDCAuthContext, String, T>
     for OIDCAuthProvider<T>
 {
     async fn get_challenge(&self) -> Result<(String, OIDCAuthContext), AuthError> {

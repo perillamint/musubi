@@ -22,9 +22,9 @@ use clap::Parser;
 use sea_orm::{ConnectOptions, Database};
 
 mod api;
-mod auth;
 mod config;
 mod error;
+mod idp;
 
 use config::read_config;
 
