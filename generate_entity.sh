@@ -7,6 +7,7 @@
 set -e
 cd "$(dirname "$0")"
 
+rm -rf src/entity || true
 sea-orm-cli generate entity -v -o src/entity --with-serde both
 
 for file in src/entity/*.rs; do

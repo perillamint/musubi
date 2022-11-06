@@ -10,7 +10,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sea-orm = { version = "0.9", features = ["sqlx-sqlite", "runtime-actix-rustls", "macros"] }
+sea-orm = { version = "0.10", features = ["sqlx-sqlite", "runtime-actix-rustls", "macros"] }
 tokio = { version = "1", features = ["full"] }
 actix-web = "4.0"
 openidconnect = { version = "2.3", features = ["reqwest"] }
